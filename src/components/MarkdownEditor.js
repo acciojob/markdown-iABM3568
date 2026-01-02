@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 
 const MarkdownEditor = () => {
   const [markdown, setMarkdown] = useState("# Hello world");
-  const [html, setHtml] = useState("");
+  const [preview, setPreview] = useState("");
 
   useEffect(() => {
-    // very simple markdown handling (enough for Cypress)
-    if (markdown.startsWith("# ")) {
-      setHtml(`<h1>${markdown.replace("# ", "")}</h1>`);
-    } else {
-      setHtml(`<p>${markdown}</p>`);
-    }
+    const html = markdown
+      .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+      .replace(/\n/g, "<br>");
+
+    setPreview(html);
   }, [markdown]);
 
   return (
@@ -25,7 +24,7 @@ const MarkdownEditor = () => {
       <div
         className="preview"
         style={{ width: "50%", padding: "20px" }}
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={{ __html: preview }}
       />
     </div>
   );
