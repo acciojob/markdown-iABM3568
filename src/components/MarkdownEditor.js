@@ -1,17 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-const MarkdownEditor = () => {
-  const [markdown, setMarkdown] = useState("# Hello world");
-  const [preview, setPreview] = useState("");
-
-  useEffect(() => {
-    const html = markdown
-      .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-      .replace(/\n/g, "<br>");
-
-    setPreview(html);
-  }, [markdown]);
-
+const MarkdownEditor = ({ markdown, setMarkdown, preview }) => {
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       <textarea
