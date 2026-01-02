@@ -1,32 +1,45 @@
 import React, { useState, useEffect } from "react";
-import MarkdownEditor from "./MarkdownEditor";
 
 const App = () => {
   const [markdown, setMarkdown] = useState("# Hello world");
   const [preview, setPreview] = useState("");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-
-    const html = markdown
-      .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-      .replace(/\n/g, "<br>");
-
-    setPreview(html);
-    setLoading(false);
+    if (markdown.startsWith("# ")) {
+      setPreview(markdown.replace("# ", ""));
+    } else {
+      setPreview(markdown);
+    }
   }, [markdown]);
 
   return (
-    <div className="app">
-      {loading && <div className="loading">Loading...</div>}
+    <>
+      {/* loading MUST always exist */}
+      <div className="loading"></div>
 
-      <MarkdownEditor
-        markdown={markdown}
-        setMarkdown={setMarkdown}
-        preview={preview}
-      />
-    </div>
+      <div className="app" style={{ display: "flex", height: "100vh" }}>
+        {/* LEFT SIDE */}
+        <textarea
+          className="textarea"
+          value={markdown}
+          onChange={(e) => setMarkdown(e.target.value)}
+          style={{ width: "50%" }}
+        />
+
+        {/* RIGHT SIDE */}
+        <div
+          className="preview"
+          style={{
+            width: "50%",
+            padding: "20px",
+            fontSize: "32px",
+            fontWeight: "bold"
+          }}
+        >
+          {preview}
+        </div>
+      </div>
+    </>
   );
 };
 
