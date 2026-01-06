@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 
 const MarkdownEditor = () => {
@@ -20,8 +19,9 @@ const MarkdownEditor = () => {
   }, [markdown]);
 
   return (
-    <div className="app" style={{ display: "flex", height: "100vh" }}>
-      {loading && <div className="loading">Loading...</div>}
+    <>
+      {/* MUST ALWAYS EXIST */}
+      <div className="loading">{loading ? "Loading..." : ""}</div>
 
       <textarea
         className="textarea"
@@ -35,7 +35,7 @@ const MarkdownEditor = () => {
         style={{ width: "50%", padding: "20px" }}
         dangerouslySetInnerHTML={{ __html: preview }}
       />
-    </div>
+    </>
   );
 };
 
