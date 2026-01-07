@@ -2,43 +2,48 @@ import React, { useState, useEffect } from "react";
 
 const MarkdownEditor = () => {
   const [markdown, setMarkdown] = useState("# Hello world");
-  const [preview, setPreview] = useState("");
+  const [preview, setPreview] = useState("<h1>Hello world</h1>");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     
-    setTimeout(() => {
-      // Convert markdown to HTML
+    const timer = setTimeout(() => {
       let html = markdown;
       
-      // Handle headings (# Heading)
-      html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      // Handle headings (order matters!)
       html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
       
-      // Handle bold (**text**)
+      // Handle bold
       html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       
-      // Handle italic (*text*)
+      // Handle italic
       html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
       
-      // Handle line breaks
-      html = html.replace(/\n/g, '<br/>');
+      // Handle paragraphs
+      const lines = html.split('\n');
+      html = lines.map(line => {
+        if (line.trim() && !line.startsWith('<h')) {
+          return `<p>${line}</p>`;
+        }
+        return line;
+      }).join('');
       
       setPreview(html);
       setLoading(false);
-    }, 0);
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [markdown]);
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      {/* Loading indicator - MUST ALWAYS EXIST */}
-      <div className="loading" style={{ display: loading ? 'block' : 'none', position: 'absolute', top: '10px', left: '10px' }}>
+    <div style={{ display: 'flex', height: '100vh', margin: 0 }}>
+      <div className="loading">
         {loading ? "Loading..." : ""}
       </div>
       
-      {/* Textarea for markdown input */}
       <textarea
         className="textarea"
         value={markdown}
@@ -48,19 +53,20 @@ const MarkdownEditor = () => {
           width: '50%', 
           padding: '20px', 
           fontSize: '16px',
-          border: '1px solid #ccc',
-          resize: 'none'
+          border: '1px solid #ddd',
+          resize: 'none',
+          fontFamily: 'monospace'
         }}
       />
       
-      {/* Preview area */}
       <div
         className="preview"
         style={{ 
           width: '50%', 
           padding: '20px',
-          borderLeft: '1px solid #ccc',
-          overflowY: 'auto'
+          borderLeft: '1px solid #ddd',
+          overflowY: 'auto',
+          backgroundColor: '#fff'
         }}
         dangerouslySetInnerHTML={{ __html: preview }}
       />
